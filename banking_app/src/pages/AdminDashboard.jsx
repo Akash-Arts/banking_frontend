@@ -12,11 +12,15 @@ import {
   Alert,
   CircularProgress,
   Typography,
+  Avatar,
+  Stack,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CreateUserDialog from "../components/CreateUserDialog";
 import axios from "../api/api.js";
+import AddIcon from "@mui/icons-material/Add";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
@@ -58,14 +62,57 @@ export default function AdminDashboard() {
 
   return (
     <Box p={3}>
-      <Box display="flex" justifyContent="space-between" mb={2}>
-        <Typography variant="h5">Admin Dashboard</Typography>
-        <Button variant="contained" onClick={() => setOpenCreate(true)}>
-          Create User
-        </Button>
-        <Button variant="outlined" color="secondary" onClick={handleLogout}>
-          Logout
-        </Button>
+      <Box
+        component={Paper}
+        elevation={3}
+        sx={{
+          p: 2,
+          mb: 3,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          borderRadius: 2,
+        }}
+      >
+        {/* Left Section */}
+        <Box sx={{ display: "flex", flexDirection: "row" , justifyContent:"center", alignItems:'center'}}>
+          <img
+            src="/intech-icon.png"
+            alt="SBI"
+            width={36}
+            height={36}
+            style={{
+              borderRadius: "50%",
+              objectFit: "cover",
+              border: "2px solid white",
+              padding: "2px",
+              marginRight:"5px"
+            }}
+          />
+          <Typography variant="h5" fontWeight="bold">
+            Admin Dashboard
+          </Typography>
+        </Box>
+
+        {/* Right Section */}
+        <Stack direction="row" spacing={2}>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => setOpenCreate(true)}
+          >
+            Create User
+          </Button>
+
+          <Button
+            variant="outlined"
+            color="error"
+            startIcon={<LogoutIcon />}
+            onClick={handleLogout}
+          >
+            Logout
+          </Button>
+        </Stack>
       </Box>
 
       {loading ? (
@@ -78,6 +125,9 @@ export default function AdminDashboard() {
             <TableHead>
               <TableRow>
                 <TableCell>
+                  <b>picture</b>
+                </TableCell>
+                <TableCell>
                   <b>Name</b>
                 </TableCell>
                 <TableCell>
@@ -86,9 +136,7 @@ export default function AdminDashboard() {
                 <TableCell>
                   <b>Balance</b>
                 </TableCell>
-                <TableCell>
-                  <b>IFSC</b>
-                </TableCell>
+
                 <TableCell>
                   <b>Created At</b>
                 </TableCell>
@@ -99,10 +147,16 @@ export default function AdminDashboard() {
               {users.length > 0 ? (
                 users.map((user) => (
                   <TableRow key={user._id}>
+                    <TableCell>
+                      <Avatar
+                        src={`http://localhost:5000${user.profilePic}`}
+                        sx={{ width: 40, height: 40 }}
+                      />
+                    </TableCell>
                     <TableCell>{user.name}</TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>₹ {user.balance}</TableCell>
-                    <TableCell>{user.ifsc}</TableCell>
+
                     <TableCell>
                       {new Date(user.createdAt).toLocaleString()}
                     </TableCell>

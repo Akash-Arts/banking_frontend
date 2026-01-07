@@ -2,6 +2,10 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import AdminDashboard from "./pages/AdminDashboard";
 import UserDashboard from "./pages/UserDashboard";
+import DepositDialog from "./components/DepositDialog.jsx";
+import WithdrawDialog from "./components/WithdrawDialog";
+import ReportPage from "./pages/ReportPage";
+import { NotFound } from "./pages/NotFound.jsx";
 
 const PrivateRoute = ({ children, role }) => {
   const userRole = localStorage.getItem("role");
@@ -36,6 +40,14 @@ export default function App() {
           element={
             <PrivateRoute role="user">
               <UserDashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/user/report"
+          element={
+            <PrivateRoute>
+              <ReportPage />
             </PrivateRoute>
           }
         />

@@ -11,7 +11,15 @@ import {
 import axios from "../api/api.js";
 import { useState } from "react";
 
-export default function DepositDialog({ sendEmail, open, onClose, onSuccess , setBalance}) {
+export default function DepositDialog({
+  sendEmail,
+  open,
+  onClose,
+  onSuccess,
+  setBalance,
+  transactions,
+  setTransactions,
+}) {
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -24,15 +32,18 @@ export default function DepositDialog({ sendEmail, open, onClose, onSuccess , se
     setLoading(true);
     const id = localStorage.getItem("userId");
     const res = await axios.post("/bank/deposit", { id, amount });
-    setBalance(res.data.balance)
-    sendEmail(res.data.message, res.data.mailId)
+    setBalance(res.data.balance);
+    sendEmail(res.data.message, res.data.mailId);
+
     // Simulate API call
     setTimeout(() => {
+      setTransactions((prev) => [res.data.transaction, ...prev]);
       setLoading(false);
       onClose();
       onSuccess && onSuccess(`Deposited ₹${amount} successfully`);
       setAmount("");
     }, 1500);
+    
   };
 
   const handleCancel = () => {

@@ -19,6 +19,8 @@ export default function WithdrawDialog({
   onSuccess,
   setBalance,
   balance = 0,
+  transactions,
+  setTransactions,
 }) {
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
@@ -45,13 +47,16 @@ export default function WithdrawDialog({
     const res = await axios.post("/bank/withdraw", { id, amount });
     setBalance(res.data.balance);
     sendEmail(res.data.message, res.data.mailId);
+
     setTimeout(() => {
       setLoading(false);
       setConfirmOpen(false);
+      setTransactions((prev) => [res.data.transaction, ...prev]);
       onClose();
       onSuccess && onSuccess(`Withdrawn ₹${amount} successfully`);
       setAmount("");
     }, 1500);
+    
   };
 
   const handleCancel = () => {

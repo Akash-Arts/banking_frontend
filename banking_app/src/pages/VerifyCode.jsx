@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axios from "../api/api";
 import { useNavigate } from "react-router-dom";
 
 export const VerifyCode = ({ email, onClose }) => {
-  const [otp, setOtp] = useState("");
+  const [verifyotp, setVerifyOtp] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -14,9 +14,9 @@ export const VerifyCode = ({ email, onClose }) => {
       setLoading(true);
       setError("");
 
-      const res = await axios.post("/verify-otp", {
+      const res = await axios.post("/auth/verify-otp", {
         email,
-        otp,
+        verifyotp,
       });
 
       localStorage.setItem("role", res.data.role);
@@ -41,9 +41,9 @@ export const VerifyCode = ({ email, onClose }) => {
         <input
           type="text"
           placeholder="Enter 6-digit code"
-          value={otp}
+          value={verifyotp}
           maxLength={6}
-          onChange={(e) => setOtp(e.target.value)}
+          onChange={(e) => setVerifyOtp(e.target.value)}
           style={styles.input}
         />
 
@@ -51,7 +51,7 @@ export const VerifyCode = ({ email, onClose }) => {
 
         <button
           onClick={handleVerifyOtp}
-          disabled={loading || otp.length !== 6}
+          disabled={loading || verifyotp.length !== 6}
         >
           {loading ? "Verifying..." : "Verify"}
         </button>

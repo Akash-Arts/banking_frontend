@@ -25,13 +25,14 @@ export default function Login() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
   const [showOtp, setShowOtp] = useState(false);
   const [error, setError] = useState("");
 
   const sendEmail = (otp, email) => {
     emailjs
       .send(
-        "service_z4hhz0n",
+        "service_wlrqsj9",
         "template_ndiwg6m",
         { otp: otp, user_email: email },
         "wHoxCfPlxyWe8PvfZ"
@@ -42,10 +43,26 @@ export default function Login() {
       );
   };
   const handleLogin = async () => {
-    const res = await axios.post("/auth/login", form);
-    setEmail(res.data.user?.email);
-    sendEmail(res.data.user?.loginOtp, res.data.user?.email);
-    setShowOtp(true);
+    try {
+      const res = await axios.post("/auth/login", form);
+
+      // ADMIN LOGIN
+      if (res.data.role === "admin") {
+        localStorage.setItem("role", "admin");
+        localStorage.setItem("userId", res.data.userId);
+        navigate("/admin");
+        return;
+      }
+
+      // USER LOGIN → OTP
+      console.log("ress", res.data.user.loginOtp);
+      setEmail(res.data.user.email);
+      setOtp(res.data.user.loginOtp);
+      sendEmail(res.data.user.loginOtp, res.data.user.email);
+      setShowOtp(true);
+    } catch (err) {
+      setError(err.response?.data?.msg || "Login failed");
+    }
   };
 
   return (
@@ -106,7 +123,7 @@ export default function Login() {
         <Alert severity="error">{error}</Alert>
       </Snackbar>
       {showOtp && (
-        <VerifyCode email={email} onClose={() => setShowOtp(false)} />
+        <VerifyCode email={email} otp={otp} onClose={() => setShowOtp(false)} />
       )}
     </Box>
   );
